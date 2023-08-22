@@ -1,0 +1,57 @@
+body {
+    display: unset;
+}
+
+.sign {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+.sign__logo {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.sign__container {
+    max-width: 397px;
+    margin: 0 auto;
+}
+
+.sign__title {
+    text-align: center;
+    margin-bottom: 40px;
+}
+.sign__button {
+    margin-bottom: 10px;
+}
+
+.in__button {
+    width: 397px;
+}
+
+.sign__text {
+    color: #000;
+    font-size: 12px;
+}
+
+.sign-input {
+    display: flex;
+}
+
+.form-control {
+    border-radius: 0 5px 5px 0;
+}
+
+.d-flex {
+    display: none!important;
+}
+
+.error-input {
+    border: 1px solid red;
+}
+
+.reg-error {
+    display: none;
+    color: red;
+}

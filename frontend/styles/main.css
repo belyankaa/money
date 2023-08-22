@@ -1,0 +1,33 @@
+.main-title {
+    margin-bottom: 100px;
+}
+
+.main__charts {
+    padding: 120px 0 0 0;
+    display: flex;
+}
+
+.main__charts__income {
+    width: 470px;
+}
+
+.main__charts__outcome {
+    width: 470px;
+}
+
+.main__charts__middle {
+    margin: 55px 84px 0 84px;
+    width: 1px;
+    height: 450px;
+    background-color: #D9D9D9;;
+}
+
+.charts__title {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #290661;
+    font-family: "Roboto-Medium", sans-serif;
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 500;
+}

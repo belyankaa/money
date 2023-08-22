@@ -1,0 +1,71 @@
+.are__you__in-out {
+    display: block;
+}
+
+.main__actions {
+    margin-bottom: 49px;
+}
+
+.main__actions .btn {
+    width: 130px;
+}
+
+.delete {
+    cursor: pointer;
+}
+
+.redact {
+    cursor: pointer;
+}
+
+#body {
+    position: relative;
+}
+
+.empty {
+    position: absolute;
+    top: 20px;
+    left: calc(50% - 60px);
+    font-size: 20px;
+}
+
+.main__operations {
+    margin-top: 49px;
+}
+
+.operation__actions {
+    display: flex;
+}
+
+.redact {
+    margin-left: 11px;
+}
+
+.tablet__item {
+    text-align: center;
+}
+
+.input-create {
+    margin-bottom: 10px;
+    max-width: 397px;
+}
+
+.input-create:last-child {
+    margin-bottom: 20px;
+}
+
+.table > :not(caption) > * > *.operation__title {
+    color: #052C65;
+    font-family: "Roboto-Medium", sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1.333px;
+}
+
+.table > :not(caption) > * > *.in {
+    color: green;
+}
+
+.table > :not(caption) > * > *.out {
+    color: red;
+}

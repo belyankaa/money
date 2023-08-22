@@ -1,0 +1,69 @@
+<main class="main">
+    <div class="container main__container">
+        <div class="title main__title">Доходы и расходы</div>
+        <div class="main__actions">
+            <div id="creatIn" class="btn btn-success are">Создать доход</div>
+            <div id="creatOut" class="btn btn-danger are">Создать расход</div>
+        </div>
+        <div class="main-nav-items">
+            <ul class="nav nav-pills">
+                <li class="nav-item main__nav-item">
+                    <div class="nav-link gray-btn" data-period="">Сегодня</div>
+                </li>
+                <li class="nav-item main__nav-item ms-4">
+                    <div class="nav-link gray-btn" data-period="week">Неделя</div>
+                </li>
+                <li class="nav-item main__nav-item ms-4">
+                    <div class="nav-link gray-btn" data-period="month">Месяц</div>
+                </li>
+                <li class="nav-item main__nav-item ms-4">
+                    <div class="nav-link gray-btn" data-period="year">Год</div>
+                </li>
+                <li class="nav-item main__nav-item ms-4">
+                    <div class="nav-link gray-btn" data-period="all">Все</div>
+                </li>
+                <li class="nav-item main__nav-item ms-4">
+                    <div class="nav-link gray-btn" data-period="interval">Интервал</div>
+                </li>
+            </ul>
+            <div class="main-date main-date__from">
+                <div class="main-date__text main-date__from__text">с</div>
+                <a id="dateFrom" class="main-date__link main-date__from__link">Дата</a>
+                <input id="dateFromIn" class="datainp" type="date">
+            </div>
+            <div class="main-date main-date__to">
+                <div class="main-date__text main-date__from__text">по</div>
+                <a id="dateTo" class="main-date__link main-date__from__link">Дата</a>
+                <input id="dateToIn" class="datainp" type="date">
+            </div>
+            <div>
+                <button id="accept" class="acceptButton">Принять</button>
+            </div>
+        </div>
+        <div class="main__operations">
+            <table class="table">
+                <thead>
+                <tr class="tablet__item">
+                    <th scope="col" class="operation__title">№ операции</th>
+                    <th scope="col" class="operation__title">Тип</th>
+                    <th scope="col" class="operation__title">Категория</th>
+                    <th scope="col" class="operation__title">Сумма</th>
+                    <th scope="col" class="operation__title">Дата</th>
+                    <th scope="col" class="operation__title">Комментарий</th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody id="body"></tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<div id="sure" class="are__you">
+    <div class="are__you__text">Вы действительно хотите удалить операцию?</div>
+    <div class="are__you__actions">
+        <div id="yes-shur" class="btn btn-success are">Да, удалить</div>
+        <div id="no-shur" class="btn btn-danger are">Не удалять</div>
+    </div>
+</div>
+<div id="sure-bg" class="are__you__bg"></div>

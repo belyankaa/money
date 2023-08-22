@@ -1,0 +1,51 @@
+<main class="main">
+    <div class="container main__container">
+        <div class="title main-title">Главная</div>
+        <div class="main-nav-items">
+            <ul class="nav nav-pills">
+                <li class="nav-item main__nav-item">
+                    <div class="nav-link gray-btn" data-period="">Сегодня</div>
+                </li>
+                <li class="nav-item main__nav-item ms-4">
+                    <div class="nav-link gray-btn" data-period="week">Неделя</div>
+                </li>
+                <li class="nav-item main__nav-item ms-4">
+                    <div class="nav-link gray-btn" data-period="month">Месяц</div>
+                </li>
+                <li class="nav-item main__nav-item ms-4">
+                    <div class="nav-link gray-btn" data-period="year">Год</div>
+                </li>
+                <li class="nav-item main__nav-item ms-4">
+                    <div class="nav-link gray-btn" data-period="all">Все</div>
+                </li>
+                <li class="nav-item main__nav-item ms-4">
+                    <div class="nav-link gray-btn" data-period="interval">Интервал</div>
+                </li>
+            </ul>
+            <div class="main-date main-date__from">
+                <div class="main-date__text main-date__from__text">с</div>
+                <a id="dateFrom" class="main-date__link main-date__from__link">Дата</a>
+                <input id="dateFromIn" class="datainp" type="date">
+            </div>
+            <div class="main-date main-date__to">
+                <div class="main-date__text main-date__from__text">по</div>
+                <a id="dateTo" class="main-date__link main-date__from__link">Дата</a>
+                <input id="dateToIn" class="datainp" type="date">
+            </div>
+            <div>
+                <button id="accept" class="acceptButton">Принять</button>
+            </div>
+        </div>
+        <div class="main__charts">
+            <div class="main__charts__income">
+                <div class="charts__title">Доходы</div>
+                <canvas id="pieChartIn"></canvas>
+            </div>
+            <div class="main__charts__middle"></div>
+            <div class="main__charts__outcome">
+                <div class="charts__title">Расходы</div>
+                <canvas id="pieChartOut"></canvas>
+            </div>
+        </div>
+    </div>
+</main>
