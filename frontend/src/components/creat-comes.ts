@@ -1,9 +1,14 @@
-import {CustomHttp} from "../services/custom-http.js";
-import config from "../config/config.js";
+import {CustomHttp} from "../services/custom-http";
+import config from "../config/config";
 
 export class CreatComes {
 
-    constructor(page) {
+    readonly page: string | null;
+    readonly titleElement: HTMLElement | null;
+    readonly accButton: HTMLElement | null;
+    readonly rejButton: HTMLElement | null;
+
+    constructor(page: string | null) {
         this.page = page;
         this.titleElement = document.getElementById('name-creat');
         this.accButton = document.getElementById('acc');
@@ -12,25 +17,31 @@ export class CreatComes {
         this.buttons();
 
 
-        let that = this;
+        let that: CreatComes = this;
+        if (!this.accButton || !this.titleElement) {
+            return;
+        }
         this.accButton.setAttribute('disabled', 'disabled');
-        this.titleElement.addEventListener('change',function(event) {
-            if (that.titleElement.value) {
-                that.accButton.removeAttribute('disabled');
+        this.titleElement.addEventListener('change',function(): void {
+            if (that.titleElement!.value) {
+                that.accButton!.removeAttribute('disabled');
             } else {
-                that.accButton.setAttribute('disabled', 'disabled');
+                that.accButton!.setAttribute('disabled', 'disabled');
             }
         });
     }
 
-    buttons() {
+    private buttons(): void {
+        if (!this.rejButton || !this.accButton) {
+            return;
+        }
         this.rejButton.onclick = () => {
             location.href = '/#/' + this.page;
         }
 
         this.accButton.onclick = () => {
             try {
-                if (this.titleElement.value) {
+                if (this.titleElement && this.titleElement.value) {
                     try {
                         CustomHttp.request(config.host + '/categories/' + this.page, 'POST', {
                             title: this.titleElement.value

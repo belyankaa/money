@@ -1,10 +1,17 @@
-import {Auth} from "../services/auth.js";
-import {CustomHttp} from "../services/custom-http.js";
-import config from "../config/config.js";
+import {Auth} from "../services/auth";
+import {CustomHttp} from "../services/custom-http";
+import config from "../config/config";
+import {FormFieldsType} from "../types/form-fields.type";
 
 export class Form {
 
-    constructor(page) {
+    readonly page: string | null;
+    readonly rememberElement: HTMLElement | null;
+    private processElement: HTMLElement | null;
+    private fields: FormFieldsType[];
+
+
+    constructor(page: string | null) {
         this.rememberElement = null;
         this.processElement = null;
         this.page = page;
@@ -54,7 +61,7 @@ export class Form {
         }
 
         const that = this;
-        this.fields.forEach(item => {
+        this.fields.forEach((item: FormFieldsType) => {
             item.element = document.getElementById(item.id);
             item.element.onchange = function () {
                 that.validateField.call(that, item, this);
@@ -64,12 +71,15 @@ export class Form {
             }
         })
         this.processElement = document.getElementById('process');
+        if (!this.processElement) {
+            return;
+        }
         this.processElement.onclick = function () {
             that.processForm();
         }
     }
 
-    validateField(field, element) {
+    private validateField(field, element): void {
         if (this.page === 'signup') {
             if (!element.value || !element.value.match(field.regex)) {
                 element.classList.add('error-input');
@@ -91,34 +101,39 @@ export class Form {
         this.validateForm();
     }
 
-    checkPasswords() {
-        const field1 = document.getElementById('password');
-        const field2 = document.getElementById('repeatPassword');
-        const repeatPasswordField = this.fields.find(item => item.name === 'repeatPassword');
-        const passwordField = this.fields.find(item => item.name === 'password');
-
+    private checkPasswords(): void {
+        const field1: HTMLElement | null = document.getElementById('password');
+        const field2: HTMLElement | null = document.getElementById('repeatPassword');
+        const repeatPasswordField: FormFieldsType | undefined = this.fields.find(item => item.name === 'repeatPassword');
+        const passwordField: FormFieldsType | undefined = this.fields.find(item => item.name === 'password');
+        if (!field1 || !field2 || !repeatPasswordField) {
+            return;
+        }
         if (field2.value && passwordField.valid) {
             if (field1.value !== field2.value) {
-                field2.parentElement.nextElementSibling.innerText = repeatPasswordField.textReg
-                field2.parentElement.nextElementSibling.style.display = 'block'
+                field2.parentElement!.nextElementSibling!.innerText = repeatPasswordField.textReg
+                field2.parentElement!.nextElementSibling!.style.display = 'block'
                 field1.classList.add('error-input');
                 field2.classList.add('error-input');
                 repeatPasswordField.valid = false;
             } else {
-                field2.parentElement.nextElementSibling.style.display = 'none'
+                field2.parentElement!.nextElementSibling!.style.display = 'none'
                 field1.classList.remove('error-input');
                 field2.classList.remove('error-input');
                 repeatPasswordField.valid = true;
             }
         } else {
             field2.classList.remove('error-input')
-            field2.parentElement.nextElementSibling.style.display = 'none'
+            field2.parentElement!.nextElementSibling!.style.display = 'none'
         }
         this.validateForm();
     }
 
-    validateForm() {
-        const validForm = this.fields.every(item => item.valid);
+    private validateForm(): boolean {
+        const validForm: boolean = this.fields.every((item: FormFieldsType) => item.valid);
+       if (!this.processElement) {
+           return false;
+       }
         if (validForm) {
             this.processElement.removeAttribute('disabled');
         } else {
@@ -127,16 +142,16 @@ export class Form {
         return validForm;
     }
 
-    async processForm() {
+    private async processForm(): Promise<void> {
         if (this.validateForm()) {
-            const email = this.fields.find(item => item.name === 'email').element.value;
-            const password = this.fields.find(item => item.name === 'password').element.value;
+            const email = this.fields.find(item=> item.name === 'email').element.value;
+            const password = this.fields.find(item=> item.name === 'password').element.value;
 
 
             if (this.page === 'signup') {
                 try {
-                    const name = this.fields.find(item => item.name === 'name').element.value.split(' ')
-                    const repeatPassword = this.fields.find(item => item.name === 'repeatPassword').element.value;
+                    const name = this.fields.find(item=> item.name === 'name').element.value.split(' ')
+                    const repeatPassword = this.fields.find(item=> item.name === 'repeatPassword').element.value;
                     const result = await CustomHttp.request(config.host + '/signup', 'POST', {
                         name: name[0],
                         lastName: name[1],
@@ -182,19 +197,6 @@ export class Form {
                     }
 
                     const result = await CustomHttp.request(config.host + '/login', 'POST', param);
-
-
-                    // Не работает-------------------------------------------
-                    // const errorBlock = document.getElementById('not-found');
-                    // const response = await fetch(config.host + '/login', param)
-                    // console.log(response)
-                    // if (response.status === 404) {
-                    //     errorBlock.style.display = 'block';
-                    //     errorBlock.innerText = 'Неверный email или пароль';
-                    // } else {
-                    //     errorBlock.style.display = 'none';
-                    // }
-                    // ------------------------------------------------------
 
                     if (result) {
                         if (result.error || !result.tokens.accessToken || !result.tokens.refreshToken || !result.user.name || !result.user.lastName || !result.user.id) {

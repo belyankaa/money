@@ -1,7 +1,7 @@
 import {Auth} from "./auth";
 
 export class CustomHttp {
-    public static async request(url, method = 'GET', body = null) {
+    public static async request(url: string, method: string = 'GET', body: object | null = null) {
 
         const params = {
             method: method,
@@ -10,7 +10,7 @@ export class CustomHttp {
                 'Accept': 'application/json',
             }
         };
-        let token = localStorage.getItem(Auth.accessTokenKey);
+        let token: string | null = localStorage.getItem(Auth.accessTokenKey);
         if (token) {
             params.headers['x-auth-token'] = token;
         }
@@ -19,7 +19,7 @@ export class CustomHttp {
             params.body = JSON.stringify(body)
         }
 
-        const response = await fetch(url, params);
+        const response: Response = await fetch(url, params);
 
         if (response.status < 200 || response.status >= 300) {
             if (response.status === 401) {

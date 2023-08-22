@@ -4,6 +4,16 @@ import config from "../config/config.js";
 
 export class Sidebar {
 
+    readonly balanceElement: HTMLElement | null;
+    readonly profileElement: HTMLElement | null;
+    readonly logOutElement: HTMLElement | null;
+    private categoriesElement: HTMLElement | null;
+    private categoriesFirstElement: HTMLElement | null;
+    private categoriesSecondElement: HTMLElement | null;
+    private inOutElement: HTMLElement | null;
+    private mainElement: HTMLElement | null;
+    private logoElement: HTMLElement | null;
+
     constructor() {
         this.balanceElement = document.getElementById('balance');
         this.profileElement = document.getElementById('profile');
@@ -21,7 +31,7 @@ export class Sidebar {
         this.logOut();
     }
 
-    buttons() {
+    private buttons(): void {
         //Категории--------------------------------------------------------------------
         this.logoElement = document.getElementById('logo');
         this.mainElement = document.getElementById('main-page');
@@ -33,19 +43,20 @@ export class Sidebar {
         this.clearButtons();
 
         let url = location.href.split('/#/')[1].split('?')[0];
-        if (url === 'main') {
+        if (url === 'main' && this.mainElement) {
             this.mainElement.classList.add('main-active');
-        } else if (url === 'in-out-comes') {
+        } else if (url === 'in-out-comes' && this.inOutElement) {
             this.inOutElement.classList.add('in-out-active');
-        } else if (url === 'income') {
+        } else if (url === 'income' && this.categoriesElement && this.categoriesFirstElement) {
             this.categoriesElement.classList.add('open-categories');
-            this.categoriesElement.parentElement.nextElementSibling.classList.add('categories-open');
+            this.categoriesElement.parentElement!.nextElementSibling!.classList.add('categories-open');
             this.categoriesFirstElement.classList.add('active-categorie-item1');
-        } else if (url === 'expense') {
+        } else if (url === 'expense' && this.categoriesElement && this.categoriesSecondElement) {
             this.categoriesElement.classList.add('open-categories');
-            this.categoriesElement.parentElement.nextElementSibling.classList.add('categories-open');
+            this.categoriesElement.parentElement!.nextElementSibling!.classList.add('categories-open');
             this.categoriesSecondElement.classList.add('active-categorie-item2');
         }
+
 
         this.categoriesElement.onclick = () => {
             this.categoriesElement.classList.add('open-categories');
@@ -63,40 +74,44 @@ export class Sidebar {
         }
 
         //Доходы & расходы---------------------------------------------------------------
-        this.inOutElement.onclick = () => {
+        this.inOutElement.onclick = (): void => {
             window.location.href = '/#/in-out-comes';
         }
 
         //Главная-------------------------------------------------------------------------
-        this.mainElement.onclick = () => {
+        this.mainElement.onclick = (): void => {
             window.location.href = '/#/main';
         }
 
         //Логотип-------------------------------------------------------------------------
-        this.logoElement.onclick = () => {
+        this.logoElement.onclick = (): void => {
             this.clearButtons();
             this.mainElement.classList.add('main-active');
         }
     }
 
-    clearButtons() {
+    private clearButtons(): void {
+        if (!this.categoriesElement || !this.categoriesFirstElement || !this.categoriesSecondElement || !this.inOutElement
+        || !this.mainElement) {
+            return
+        }
         this.categoriesElement.classList.remove('open-categories');
-        this.categoriesElement.parentElement.nextElementSibling.classList.remove('categories-open');
+        this.categoriesElement.parentElement!.nextElementSibling!.classList.remove('categories-open');
         this.categoriesFirstElement.classList.remove('active-categorie-item1');
         this.categoriesSecondElement.classList.remove('active-categorie-item2');
         this.inOutElement.classList.remove('in-out-active');
         this.mainElement.classList.remove('main-active');
     }
 
-    async showBalance() {
+    private async showBalance(): Promise<void> {
         await this.updateBalance();
         const result = await CustomHttp.request(config.host + '/balance', 'GET');
-        if (result.balance) {
+        if (result.balance && this.balanceElement) {
             this.balanceElement.innerText = result.balance + '$';
         }
     }
 
-    async updateBalance() {
+    private async updateBalance() {
         let plus = 0;
         let minus = 0;
         const result = await CustomHttp.request(config.host + '/operations?period=all');
@@ -114,7 +129,10 @@ export class Sidebar {
         }
     }
 
-    logOut() {
+    private logOut(): void {
+        if (!this.logOutElement) {
+            return;
+        }
         this.logOutElement.onclick = () => {
             Auth.logOut();
             location.href = '/#/'

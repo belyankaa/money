@@ -1,6 +1,16 @@
 export class Period {
 
-    constructor(page) {
+    readonly page: string | null;
+    private buttons: HTMLCollection | null;
+    private dataFrom: HTMLElement | null;
+    private dataFromIn: HTMLElement | null;
+    private acceptButton: HTMLElement | null;
+    private valueFrom: string | null;
+    private valueTo: string | null;
+    private dataTo: HTMLElement | null;
+    private dataToIn: HTMLElement | null;
+
+    constructor(page: string | null) {
         this.page = page;
         this.buttons = document.getElementsByClassName('gray-btn');
         this.dataFrom = document.getElementById('dateFrom');
@@ -14,34 +24,53 @@ export class Period {
         this.periodButtons();
     }
 
-    sendInterval() {
-        let href
+    private sendInterval() {
+        let href: string;
         if (this.page) {
-            href = '/#/in-out-comes?period=interval'
+            href = '/#/in-out-comes?period=interval';
         } else {
-            href = '/#/main?period=interval'
+            href = '/#/main?period=interval';
         }
         location.href = href + '&dateFrom=' + this.valueFrom + '&dateTo=' + this.valueTo;
     }
 
-    clearActiveButton() {
+    private clearActiveButton() {
+        if (!this.buttons) {
+            return;
+        }
         for (let i = 0; i < this.buttons.length; i++) {
             this.buttons[i].classList.remove('active-gray');
         }
     }
 
-    periodButtons() {
-
+    private periodButtons() {
+        if (!this.acceptButton) {
+            return;
+        }
         this.acceptButton.onclick = () => {
             this.sendInterval();
         }
 
-        this.dataFrom.onclick = () => {
+        if (!this.dataFrom) {
+            return;
+        }
+
+        this.dataFrom.onclick = (): void => {
+            if (!this.dataFromIn || !this.dataFromIn) {
+                return;
+            }
             this.dataFromIn.classList.add('show-inp');
             this.dataFromIn.click();
         }
 
-        this.dataFromIn.onchange = () => {
+        if (!this.dataFromIn) {
+            return;
+        }
+
+        this.dataFromIn.onchange = (): void => {
+            if (!this.buttons || !this.acceptButton || !this.dataFrom || !this.dataFromIn) {
+                return;
+            }
             this.clearActiveButton();
             this.buttons[5].classList.add('active-gray')
             this.acceptButton.display = 'block'
@@ -52,16 +81,21 @@ export class Period {
             } else {
                 this.acceptButton.setAttribute('disabled', 'disabled');
             }
+
             this.dataFrom.innerText = this.dataFromIn.value
             this.dataFromIn.classList.remove('show-inp');
             this.valueFrom = this.dataFromIn.value.split('-')[0] + '.' + this.dataFromIn.value.split('-')[1] + '.' + this.dataFromIn.value.split('-')[2].split('T')[0];
         }
 
-        this.dataTo.onclick = () => {
-            this.dataToIn.classList.add('show-inp');
+        if (!this.dataTo) {
+            return;
         }
 
-        this.dataToIn.onchange = () => {
+        this.dataTo.onclick = (): void => {
+            this.dataToIn!.classList.add('show-inp');
+        }
+
+        this.dataToIn!.onchange = (): void => {
             this.clearActiveButton();
             this.buttons[5].classList.add('active-gray')
             this.acceptButton.display = 'block'

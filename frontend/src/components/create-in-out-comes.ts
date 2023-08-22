@@ -1,10 +1,27 @@
-import {Sidebar} from "../functional/sidebar.js";
-import {CustomHttp} from "../services/custom-http.js";
-import config from "../config/config.js";
+import {Sidebar} from "../functional/sidebar";
+import {CustomHttp} from "../services/custom-http";
+import config from "../config/config";
 
 export class CreatInOutComes {
 
-    constructor(param) {
+    readonly param: string | null;
+    private type: string | null;
+    readonly saveButton: HTMLElement | null;
+    readonly rejButton: HTMLElement | null;
+    private responseCat;
+    readonly selectTypeElement: HTMLElement | null;
+    readonly selectCategoryElement: HTMLElement | null;
+    readonly selectAmountElement: HTMLElement | null;
+    readonly selectDateElement: HTMLElement | null;
+    readonly selectCommentElement: HTMLElement | null;
+    private optionElement: HTMLElement | null;
+    readonly inputsElement: HTMLCollectionOf<Element> | null;
+    readonly operId: string;
+    private operInfo: HTMLElement | null;
+    id: HTMLElement | null;
+    readonly valid: boolean;
+
+    constructor(param: string | null) {
         this.param = param;
         this.type = location.href.split('type=')[1];
         this.saveButton = document.getElementById('acc');
@@ -29,13 +46,13 @@ export class CreatInOutComes {
         this.takeCategory();
         this.takeCategoryOnchange();
         this.validForm();
-        if (param) {
-            this.fill(this.operId);
+        if (param && this.operId) {
+            this.fill(parseInt(this.operId));
         }
     }
 
-    process() {
-        if (this.type) {
+    private process(): void {
+        if (this.type && this.selectTypeElement) {
             if (this.type === 'expense') {
                 this.selectTypeElement.value = 'expense';
             } else {
@@ -44,9 +61,15 @@ export class CreatInOutComes {
         }
     }
 
-    async fill(id) {
-        this.saveButton.innerText = 'Сохранить'
+    private async fill(id: number): Promise<void> {
+        if (this.saveButton) {
+            this.saveButton.innerText = 'Сохранить';
+        }
         this.operInfo = await CustomHttp.request(config.host + '/operations/' + id);
+        if (!this.operInfo || !this.selectTypeElement || !this.selectCategoryElement
+            || !this.selectAmountElement || !this.selectDateElement || !this.selectCommentElement) {
+            return;
+        }
         this.type = this.operInfo.type;
         await this.takeCategory();
         this.selectTypeElement.value = this.type
@@ -57,9 +80,12 @@ export class CreatInOutComes {
         this.selectCommentElement.value = this.operInfo.comment
     }
 
-    async takeCategoryOnchange() {
+    private async takeCategoryOnchange(): Promise<void> {
+        if (!this.selectTypeElement) {
+            return;
+        }
         this.selectTypeElement.onchange = async () => {
-            this.type = this.selectTypeElement.value;
+            this.type = this.selectTypeElement!.value;
             if (this.type) {
                 this.responseCat = await CustomHttp.request(config.host + '/categories/' + this.type);
                 this.processCategory();
@@ -69,7 +95,7 @@ export class CreatInOutComes {
         }
     }
 
-    async takeCategory() {
+    private async takeCategory(): Promise<void> {
         if (this.type) {
             this.responseCat = await CustomHttp.request(config.host + '/categories/' + this.type);
             this.processCategory();
@@ -78,66 +104,80 @@ export class CreatInOutComes {
         }
     }
 
-    async processCategory() {
+    private async processCategory(): Promise<void> {
         this.clearOptions();
-        if (this.type) {
+        if (this.type && this.responseCat) {
             this.responseCat.forEach(item => {
                 this.optionElement = document.createElement('option');
                 this.optionElement.classList.add('categ');
                 this.optionElement.setAttribute('data-id', item.id);
                 this.optionElement.value = item.title;
                 this.optionElement.innerText = item.title;
-
-                this.selectCategoryElement.appendChild(this.optionElement)
+                if (this.selectCategoryElement) {
+                    this.selectCategoryElement.appendChild(this.optionElement)
+                }
             })
         } else {
             this.clearOptions();
         }
     }
 
-    clearOptions() {
+    private clearOptions(): void {
         this.optionElement = document.getElementsByClassName('categ');
         if (this.optionElement) {
             while (this.optionElement[0]) {
-                this.optionElement[0].parentNode.removeChild(this.optionElement[0]);
+                this.optionElement[0]!.parentNode!.removeChild(this.optionElement[0]);
             }
         }
     }
 
-    buttons() {
+    private buttons(): void {
+        if (!this.rejButton || !this.saveButton) {
+            return;
+        }
+
         this.rejButton.onclick = () => {
             location.href = '/#/in-out-comes';
         }
         this.saveButton.onclick = () => {
             this.optionElement = document.getElementById('category');
+            if (!this.optionElement) {
+                return;
+            }
             this.optionElement.childNodes.forEach(item => {
-                if (item.value === this.optionElement.value) {
+                if (item.value === this.optionElement!.value) {
                     this.id = item.getAttribute('data-id');
                 }
             })
             if (this.param) {
-                this.updateOperation(this.selectTypeElement.value, +this.selectAmountElement.value, this.selectDateElement.value, this.selectCommentElement.value, +this.id);
+                this.updateOperation(this.selectTypeElement!.value, +this.selectAmountElement!.value, this.selectDateElement!.value, this.selectCommentElement!.value, +this.id!);
             } else {
-                this.createOperation(this.selectTypeElement.value, +this.selectAmountElement.value, this.selectDateElement.value, this.selectCommentElement.value, +this.id);
+                this.createOperation(this.selectTypeElement!.value, +this.selectAmountElement!.value, this.selectDateElement!.value, this.selectCommentElement!.value, +this.id!);
             }
             location.href = '/#/in-out-comes';
         }
     }
 
-    checkInputs() {
+    private checkInputs(): void {
         let hasEmpty = false;
+        if (!this.inputsElement) {
+            return;
+        }
         for (let i = 0; i < this.inputsElement.length; i++) {
             if (!this.inputsElement[i].value) {
                 hasEmpty = true;
             }
         }
 
-        if (!hasEmpty) {
+        if (!hasEmpty && this.saveButton) {
             this.saveButton.removeAttribute('disabled');
         }
     }
 
-    validForm() {
+    private validForm(): void {
+        if (!this.saveButton || !this.inputsElement) {
+            return;
+        }
         this.saveButton.setAttribute('disabled', 'disabled');
         for (let i = 0; i < this.inputsElement.length; i++) {
             this.inputsElement[i].onchange = () => {
@@ -146,7 +186,7 @@ export class CreatInOutComes {
         }
     }
 
-    createOperation(type, amount, date, comment = '', categoryId) {
+    private createOperation(type: string, amount: number, date: number, comment: string = '', categoryId: number): void {
         CustomHttp.request(config.host + '/operations', 'POST', {
             type: type,
             amount: amount,
@@ -156,7 +196,7 @@ export class CreatInOutComes {
         })
     }
 
-    updateOperation(type, amount, date, comment = '', categoryId) {
+    private updateOperation(type: string, amount: number, date: number, comment: string = '', categoryId: number): void {
         CustomHttp.request(config.host + '/operations/' + this.operId, 'PUT', {
             type: type,
             amount: amount,

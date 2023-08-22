@@ -11,10 +11,10 @@ import {UserInfoType} from "./types/user-info.type";
 
 
 export class Router {
-    private contentElement: HTMLElement | null;
-    private stylesElement: HTMLElement | null;
-    private titleElement: HTMLElement | null;
-    private profileFullNameElement: HTMLElement | null;
+    readonly contentElement: HTMLElement | null;
+    readonly stylesElement: HTMLElement | null;
+    readonly titleElement: HTMLElement | null;
+    readonly profileFullNameElement: HTMLElement | null;
 
     private routs: RouterType[];
 

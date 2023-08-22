@@ -1,17 +1,24 @@
 import {Chart} from 'chart.js/auto';
-import {Sidebar} from "../functional/sidebar.js";
+import {Sidebar} from "../functional/sidebar";
 import {Period} from "../functional/period";
-import {CustomHttp} from "../services/custom-http.js";
-import config from "../config/config.js";
-import {retinaScale} from "chart.js/helpers";
+import {CustomHttp} from "../services/custom-http";
+import config from "../config/config";
+import {MainDataOper, MainDataType} from "../types/main-data.type";
 
 export class Main {
+
+    private buttonsPeriod: HTMLCollection | null;
+    private period: string | null;
+    private data: MainDataType;
 
     constructor() {
         this.buttonsPeriod = document.getElementsByClassName('gray-btn');
         this.period = location.href.split('period=')[1];
-        this.data = null;
 
+        this.data = {
+            income: [],
+            expense: []
+        };
 
         this.charts();
         new Sidebar();
@@ -56,13 +63,7 @@ export class Main {
             },
         });
 
-        this.data = {
-            income: [],
-            expense: []
-        };
-
         result.forEach(item => {
-            console.log(item)
             if (item.type === 'income') {
                 const index = this.data.income.findIndex(incomeItem => incomeItem.category === item.category)
 
@@ -75,7 +76,7 @@ export class Main {
                     })
                 }
             } else {
-                const index = this.data.expense.findIndex(expenseItem => expenseItem.category === item.category)
+                const index: number = this.data.expense.findIndex((expenseItem: MainDataOper) => expenseItem.category === item.category)
 
                 if (index !== -1) {
                     this.data.expense[index].amount += item.amount
@@ -102,7 +103,7 @@ export class Main {
 
     }
 
-    addData(chart, label, newData) {
+    private addData(chart, label: string, newData: number): void {
         chart.data.labels.push(label);
         chart.data.datasets.forEach((dataset) => {
             dataset.data.push(newData);
@@ -110,13 +111,16 @@ export class Main {
         chart.update();
     }
 
-    buttons() {
+    private buttons(): void {
         let hasClass = false;
         if (this.period) {
             let checkHref = this.period.split('&date')[0];
             if (checkHref) {
                 this.period = checkHref;
             }
+        }
+        if (!this.buttonsPeriod) {
+            return;
         }
         for (let i = 0; i < this.buttonsPeriod.length; i++) {
             if (this.buttonsPeriod[i].getAttribute('data-period') === this.period) {

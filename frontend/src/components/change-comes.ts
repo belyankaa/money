@@ -1,9 +1,16 @@
-import {CustomHttp} from "../services/custom-http.js";
-import config from "../config/config.js";
+import {CustomHttp} from "../services/custom-http";
+import config from "../config/config";
 
 export class ChangeComes {
 
-    constructor(page) {
+    readonly page: string | null;
+    readonly titleElement: HTMLElement | null;
+    readonly saveButton: HTMLElement | null;
+    readonly rejButton: HTMLElement | null;
+    readonly cardId: string | null;
+    readonly inputElement: HTMLElement | null;
+
+    constructor(page: string | null) {
         this.page = page;
         this.titleElement = document.getElementById('name-creat');
         this.saveButton = document.getElementById('save');
@@ -16,14 +23,17 @@ export class ChangeComes {
         this.getTitle();
     }
 
-    buttons() {
+    private buttons(): void {
+        if (!this.rejButton || !this.saveButton) {
+            return;
+        }
         this.rejButton.onclick = () => {
             location.href = '/#/' + this.page;
         }
 
         this.saveButton.onclick = () => {
             try {
-                if (this.titleElement.value) {
+                if (this.titleElement && this.titleElement.value) {
                     try {
                         CustomHttp.request(config.host + '/categories/' + this.page + '/' + this.cardId, 'PUT', {
                             title: this.titleElement.value
@@ -41,7 +51,10 @@ export class ChangeComes {
         }
     }
 
-    async getTitle() {
+    private async getTitle(): Promise<void> {
+        if (!this.inputElement) {
+            return;
+        }
         const result = await CustomHttp.request(config.host + '/categories/' + this.page + '/' + this.cardId)
         this.inputElement.value = result.title
     }

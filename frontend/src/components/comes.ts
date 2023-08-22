@@ -1,11 +1,22 @@
-import {Sidebar} from "../functional/sidebar.js";
-import {CustomHttp} from "../services/custom-http.js";
-import config from "../config/config.js";
-import {ActionButtons} from "../functional/action-buttons.js";
+import {Sidebar} from "../functional/sidebar";
+import {CustomHttp} from "../services/custom-http";
+import config from "../config/config";
+import {ActionButtons} from "../functional/action-buttons";
 
 export class Comes {
 
-    constructor(page) {
+    readonly page: string | null;
+    private response;
+    readonly cardsBlockElement: HTMLElement | null;
+    private cardElement: HTMLElement | null;
+    private cardBodyElement: HTMLElement | null;
+    private cardTitleElement: HTMLElement | null;
+    private buttonCrElement: HTMLElement | null;
+    private buttonDelElement: HTMLElement | null;
+    private cardsAddElement: HTMLElement | null;
+    private svgAddElement: HTMLElement | null;
+
+    constructor(page: string | null) {
         this.page = page;
         this.response = [];
 
@@ -20,11 +31,10 @@ export class Comes {
 
 
         this.init();
-
         new Sidebar();
     }
 
-    async init() {
+    private async init(): Promise<void> {
         if (this.page === 'income') {
             await this.inComes();
 
@@ -35,7 +45,7 @@ export class Comes {
         new ActionButtons(this.page);
     }
 
-    async inComes() {
+    private async inComes(): Promise<void> {
         try {
             this.response = await CustomHttp.request(config.host + '/categories/' + this.page);
         } catch (e) {
@@ -44,7 +54,7 @@ export class Comes {
 
     }
 
-    async outComes() {
+    private async outComes(): Promise<void> {
         try {
             this.response = await CustomHttp.request(config.host + '/categories/' + this.page);
         } catch (e) {
@@ -52,7 +62,7 @@ export class Comes {
         }
     }
 
-    processComes() {
+    private processComes(): void {
         this.response.forEach(item => {
             this.cardElement = document.createElement('div');
             this.cardElement.setAttribute('data-id', item.id);
@@ -70,7 +80,9 @@ export class Comes {
 
             this.processButtons()
 
-            this.cardsBlockElement.appendChild(this.cardElement);
+            if (this.cardsBlockElement) {
+                this.cardsBlockElement.appendChild(this.cardElement);
+            }
         })
 
         this.cardsAddElement = document.createElement('div');
@@ -87,10 +99,15 @@ export class Comes {
 
         this.cardBodyElement.appendChild(this.svgAddElement);
         this.cardsAddElement.appendChild(this.cardBodyElement);
-        this.cardsBlockElement.appendChild(this.cardsAddElement);
+        if (this.cardsBlockElement) {
+            this.cardsBlockElement.appendChild(this.cardsAddElement);
+        }
     }
 
-    processButtons() {
+    private processButtons(): void {
+        if (!this.buttonCrElement || !this.cardBodyElement) {
+            return;
+        }
         this.buttonCrElement.innerText = 'Редактировать';
         this.buttonCrElement.classList.add('btn');
         this.buttonCrElement.classList.add('btn-primary');
@@ -105,6 +122,4 @@ export class Comes {
         this.cardBodyElement.appendChild(this.buttonCrElement);
         this.cardBodyElement.appendChild(this.buttonDelElement);
     }
-
-
 }
