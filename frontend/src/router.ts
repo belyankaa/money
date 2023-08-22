@@ -1,14 +1,23 @@
-import {Auth} from "./services/auth.js";
-import {Form} from "./components/form.js";
-import {Main} from "./components/main.js";
-import {Comes} from "./components/comes.js";
-import {CreatComes} from "./components/creat-comes.js";
-import {ChangeComes} from "./components/change-comes.js";
-import {InOutComes} from "./components/in-out-comes.js";
-import {CreatInOutComes} from "./components/create-in-out-comes.js";
+import {Auth} from "./services/auth";
+import {Form} from "./components/form";
+import {Main} from "./components/main";
+import {Comes} from "./components/comes";
+import {CreatComes} from "./components/creat-comes";
+import {ChangeComes} from "./components/change-comes";
+import {InOutComes} from "./components/in-out-comes";
+import {CreatInOutComes} from "./components/create-in-out-comes";
+import {RouterType} from "./types/router.type";
+import {UserInfoType} from "./types/user-info.type";
 
 
 export class Router {
+    private contentElement: HTMLElement | null;
+    private stylesElement: HTMLElement | null;
+    private titleElement: HTMLElement | null;
+    private profileFullNameElement: HTMLElement | null;
+
+    private routs: RouterType[];
+
     constructor() {
         this.contentElement = document.getElementById('content');
         this.stylesElement = document.getElementById('styles');
@@ -17,7 +26,7 @@ export class Router {
 
         this.routs = [
             {
-                route: '#/',//-----------------------------------
+                route: '#/',
                 title: 'Войти',
                 template: 'templates/login.html',
                 styles: 'styles/index.css',
@@ -26,7 +35,7 @@ export class Router {
                 }
             },
             {
-                route: '#/signup',//-------------------------------------
+                route: '#/signup',
                 title: 'Зарегистрироваться',
                 template: 'templates/signup.html',
                 styles: 'styles/index.css',
@@ -98,7 +107,7 @@ export class Router {
                 }
             },
             {
-                route: '#/create-expense',//----------------------------------------------
+                route: '#/create-expense',
                 title: 'Создать расход',
                 template: 'templates/create-expense.html',
                 styles: 'styles/change-incomes.css',
@@ -107,7 +116,7 @@ export class Router {
                 }
             },
             {
-                route: '#/red-income',//----------------------------------------------
+                route: '#/red-income',
                 title: 'Создать расход',
                 template: 'templates/red-income.html',
                 styles: 'styles/change-incomes.css',
@@ -116,7 +125,7 @@ export class Router {
                 }
             },
             {
-                route: '#/red-expense',//-----------------------------------------------
+                route: '#/red-expense',
                 title: 'Создать расход',
                 template: 'templates/red-expense.html',
                 styles: 'styles/change-incomes.css',
@@ -127,15 +136,15 @@ export class Router {
         ]
     }
 
-    async openRout() {
-        const urlRout = window.location.hash.split('?')[0];
+    public async openRout(): Promise<void> {
+        const urlRout: string = window.location.hash.split('?')[0];
         if (urlRout === '#/logout') {
             await Auth.logOut();
             window.location.href = '#/';
             return;
         }
 
-        const newRout = this.routs.find(item => {
+        const newRout: RouterType | undefined = this.routs.find((item: RouterType) => {
             return item.route === urlRout;
         });
 
@@ -144,15 +153,21 @@ export class Router {
             return;
         }
 
-        this.contentElement.innerHTML =
-            await fetch(newRout.template).then(response => response.text());
-        this.stylesElement.setAttribute('href', newRout.styles);
-        this.titleElement.innerText = newRout.title;
+        if (this.contentElement) {
+            this.contentElement.innerHTML =
+                await fetch(newRout.template).then((response: Response) => response.text());
+        }
+        if (this.stylesElement) {
+            this.stylesElement.setAttribute('href', newRout.styles);
+        }
+        if (this.titleElement) {
+            this.titleElement.innerText = newRout.title;
+        }
 
-        const userInfo = Auth.getUserInfo();
-        const accessToken = localStorage.getItem(Auth.accessTokenKey)
+        const userInfo: UserInfoType = Auth.getUserInfo();
+        const accessToken: string | null = localStorage.getItem(Auth.accessTokenKey)
 
-        if (userInfo && accessToken) {
+        if (userInfo && accessToken && this.profileFullNameElement) {
             this.profileFullNameElement.innerText = userInfo.name + ' ' + userInfo.lastName;
         }
 

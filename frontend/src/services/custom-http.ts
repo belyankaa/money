@@ -1,7 +1,7 @@
-import {Auth} from "./auth.js";
+import {Auth} from "./auth";
 
 export class CustomHttp {
-    static async request(url, method = 'GET', body = null) {
+    public static async request(url, method = 'GET', body = null) {
 
         const params = {
             method: method,

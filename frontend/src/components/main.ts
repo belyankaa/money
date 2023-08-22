@@ -3,6 +3,7 @@ import {Sidebar} from "../functional/sidebar.js";
 import {Period} from "../functional/period";
 import {CustomHttp} from "../services/custom-http.js";
 import config from "../config/config.js";
+import {retinaScale} from "chart.js/helpers";
 
 export class Main {
 
@@ -61,6 +62,7 @@ export class Main {
         };
 
         result.forEach(item => {
+            console.log(item)
             if (item.type === 'income') {
                 const index = this.data.income.findIndex(incomeItem => incomeItem.category === item.category)
 
