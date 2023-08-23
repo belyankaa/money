@@ -4,7 +4,7 @@ import {Period} from "../functional/period";
 import {CustomHttp} from "../services/custom-http";
 import config from "../config/config";
 import {MainDataOper, MainDataType} from "../types/main-data.type";
-import {CreatOperationType} from "../types/creat-operation.type";
+import {OperationType} from "../types/operation.type";
 
 export class Main {
 
@@ -29,7 +29,7 @@ export class Main {
 
 
     async charts(): Promise<void> {
-        const result: CreatOperationType[] = await CustomHttp.request(config.host + '/operations?period=' + this.period);
+        const result: OperationType[] = await CustomHttp.request(config.host + '/operations?period=' + this.period);
 
 
         // @ts-ignore
@@ -66,7 +66,7 @@ export class Main {
             },
         });
 
-        result.forEach((item: CreatOperationType): void => {
+        result.forEach((item: OperationType): void => {
             if (item.type === 'income') {
                 const index: number = this.data.income.findIndex((incomeItem: MainDataOper): boolean => incomeItem.category === item.category)
 

@@ -1,6 +1,7 @@
-import {Auth} from "../services/auth.js";
-import {CustomHttp} from "../services/custom-http.js";
-import config from "../config/config.js";
+import {Auth} from "../services/auth";
+import {CustomHttp} from "../services/custom-http";
+import config from "../config/config";
+import {OperationType} from "../types/operation.type";
 
 export class Sidebar {
 
@@ -58,35 +59,39 @@ export class Sidebar {
         }
 
 
-        this.categoriesElement.onclick = () => {
-            this.categoriesElement.classList.add('open-categories');
-            this.categoriesElement.parentElement.nextElementSibling.classList.add('categories-open');
+        (this.categoriesElement as HTMLElement).onclick = () => {
+            if (this.categoriesElement) {
+                this.categoriesElement.classList.add('open-categories');
+                this.categoriesElement.parentElement?.nextElementSibling?.classList.add('categories-open');
+            }
         }
 
         //1
-        this.categoriesFirstElement.onclick = () => {
+        (this.categoriesFirstElement as HTMLElement).onclick = () => {
             window.location.href = '/#/income';
         }
 
         //2
-        this.categoriesSecondElement.onclick = () => {
+        (this.categoriesSecondElement as HTMLElement).onclick = () => {
             window.location.href = '/#/expense';
         }
 
         //Доходы & расходы---------------------------------------------------------------
-        this.inOutElement.onclick = (): void => {
+        (this.inOutElement as HTMLElement).onclick = (): void => {
             window.location.href = '/#/in-out-comes';
         }
 
         //Главная-------------------------------------------------------------------------
-        this.mainElement.onclick = (): void => {
+        (this.mainElement as HTMLElement).onclick = (): void => {
             window.location.href = '/#/main';
         }
 
         //Логотип-------------------------------------------------------------------------
-        this.logoElement.onclick = (): void => {
+        (this.logoElement as HTMLElement).onclick = (): void => {
             this.clearButtons();
-            this.mainElement.classList.add('main-active');
+            if (this.mainElement) {
+                this.mainElement.classList.add('main-active');
+            }
         }
     }
 
@@ -114,9 +119,9 @@ export class Sidebar {
     private async updateBalance() {
         let plus = 0;
         let minus = 0;
-        const result = await CustomHttp.request(config.host + '/operations?period=all');
+        const result: OperationType[] = await CustomHttp.request(config.host + '/operations?period=all');
         if (result) {
-            result.forEach(item => {
+            result.forEach((item: OperationType): void => {
                 if (item.type === 'expense') {
                     minus += item.amount;
                 } else {

@@ -1,14 +1,14 @@
 export class Period {
 
     readonly page: string | null;
-    private buttons: HTMLCollection | null;
-    private dataFrom: HTMLElement | null;
-    private dataFromIn: HTMLElement | null;
-    private acceptButton: HTMLElement | null;
+    readonly buttons: HTMLCollection | null;
+    readonly dataFrom: HTMLElement | null;
+    readonly dataFromIn: HTMLElement | null;
+    readonly acceptButton: HTMLElement | null;
     private valueFrom: string | null;
     private valueTo: string | null;
-    private dataTo: HTMLElement | null;
-    private dataToIn: HTMLElement | null;
+    readonly dataTo: HTMLElement | null;
+    readonly dataToIn: HTMLInputElement | null;
 
     constructor(page: string | null) {
         this.page = page;
@@ -19,12 +19,12 @@ export class Period {
         this.valueFrom = null;
         this.valueTo = null;
         this.dataTo = document.getElementById('dateTo');
-        this.dataToIn = document.getElementById('dateToIn');
+        this.dataToIn = document.getElementById('dateToIn') as HTMLInputElement;
 
         this.periodButtons();
     }
 
-    private sendInterval() {
+    private sendInterval(): void {
         let href: string;
         if (this.page) {
             href = '/#/in-out-comes?period=interval';
@@ -34,7 +34,7 @@ export class Period {
         location.href = href + '&dateFrom=' + this.valueFrom + '&dateTo=' + this.valueTo;
     }
 
-    private clearActiveButton() {
+    private clearActiveButton(): void {
         if (!this.buttons) {
             return;
         }
@@ -43,7 +43,7 @@ export class Period {
         }
     }
 
-    private periodButtons() {
+    private periodButtons(): void {
         if (!this.acceptButton) {
             return;
         }
@@ -72,19 +72,20 @@ export class Period {
                 return;
             }
             this.clearActiveButton();
-            this.buttons[5].classList.add('active-gray')
-            this.acceptButton.display = 'block'
+            (this.buttons[5] as HTMLElement).classList.add('active-gray');
+            // @ts-ignore
+            (this.acceptButton as HTMLElement).display = 'block';
             this.acceptButton.classList.add('show');
             this.acceptButton.setAttribute('disabled', 'disabled');
-            if (this.dataToIn.value && this.dataFromIn.value) {
+            if ((this.dataToIn as HTMLInputElement).value && (this.dataFromIn as HTMLInputElement).value) {
                 this.acceptButton.removeAttribute('disabled');
             } else {
                 this.acceptButton.setAttribute('disabled', 'disabled');
             }
 
-            this.dataFrom.innerText = this.dataFromIn.value
+            this.dataFrom.innerText = (this.dataFromIn as HTMLInputElement).value
             this.dataFromIn.classList.remove('show-inp');
-            this.valueFrom = this.dataFromIn.value.split('-')[0] + '.' + this.dataFromIn.value.split('-')[1] + '.' + this.dataFromIn.value.split('-')[2].split('T')[0];
+            this.valueFrom = (this.dataFromIn as HTMLInputElement).value.split('-')[0] + '.' + (this.dataFromIn as HTMLInputElement).value.split('-')[1] + '.' + (this.dataFromIn as HTMLInputElement).value.split('-')[2].split('T')[0];
         }
 
         if (!this.dataTo) {
@@ -97,44 +98,51 @@ export class Period {
 
         this.dataToIn!.onchange = (): void => {
             this.clearActiveButton();
-            this.buttons[5].classList.add('active-gray')
-            this.acceptButton.display = 'block'
+            if (!this.buttons || !this.acceptButton) {
+                return;
+            }
+            (this.buttons[5] as HTMLElement).classList.add('active-gray');
+            // @ts-ignore
+            (this.acceptButton as HTMLElement).display = 'block';
             this.acceptButton.classList.add('show');
             this.acceptButton.setAttribute('disabled', 'disabled');
-            if (this.dataToIn.value && this.dataFromIn.value) {
+            if (this.dataToIn && this.dataFromIn && this.dataToIn.value && (this.dataFromIn as HTMLInputElement).value) {
                 this.acceptButton.removeAttribute('disabled');
             } else {
                 this.acceptButton.setAttribute('disabled', 'disabled');
             }
-            this.dataTo.innerText = this.dataToIn.value
-            this.dataToIn.classList.remove('show-inp');
-            this.valueTo = this.dataToIn.value.split('-')[0] + '.' + this.dataToIn.value.split('-')[1] + '.' + this.dataToIn.value.split('-')[2].split('T')[0];
+            if (this.dataToIn && this.dataFromIn && this.dataTo) {
+                this.dataTo.innerText = this.dataToIn.value
+                this.dataToIn.classList.remove('show-inp');
+                this.valueTo = this.dataToIn.value.split('-')[0] + '.' + this.dataToIn.value.split('-')[1] + '.' + this.dataToIn.value.split('-')[2].split('T')[0];
+            }
         }
 
-        for (let i = 0; i < this.buttons.length; i++) {
-            this.buttons[i].onclick = () => {
-                let period = this.buttons[i].getAttribute('data-period');
+        for (let i: number = 0; i < this.buttons!.length; i++) {
+            (this.buttons![i] as HTMLElement).onclick = (): void => {
+                let period = this.buttons![i].getAttribute('data-period');
 
                 if (this.page) {
                     if (period === 'interval') {
                         this.clearActiveButton();
-                        this.buttons[i].classList.add('active-gray')
-                        this.acceptButton.classList.add('show');
-                        this.acceptButton.setAttribute('disabled', 'disabled');
+                        this.buttons![i].classList.add('active-gray')
+                        this.acceptButton!.classList.add('show');
+                        this.acceptButton!.setAttribute('disabled', 'disabled');
                     } else {
-                        this.acceptButton.classList.remove('show');
+                        this.acceptButton!.classList.remove('show');
                         location.href = '/#/in-out-comes?period=' + period;
                     }
                 } else {
                     if (period === 'interval') {
                         this.clearActiveButton();
-                        this.buttons[i].classList.add('active-gray')
-                        this.acceptButton.display = 'block'
-                        this.acceptButton.classList.add('show');
-                        this.acceptButton.setAttribute('disabled', 'disabled');
+                        this.buttons![i].classList.add('active-gray');
+                        // @ts-ignore
+                        (this.acceptButton as HTMLElement).display = 'block';
+                        this.acceptButton!.classList.add('show');
+                        this.acceptButton!.setAttribute('disabled', 'disabled');
                     } else {
-                        this.acceptButton.classList.remove('show');
-                        this.acceptButton.removeAttribute('disabled');
+                        this.acceptButton!.classList.remove('show');
+                        this.acceptButton!.removeAttribute('disabled');
                         location.href = '/#/main?period=' + period;
                     }
                 }

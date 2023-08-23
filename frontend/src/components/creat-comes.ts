@@ -10,8 +10,7 @@ export class CreatComes {
 
     constructor(page: string | null) {
         this.page = page;
-        // @ts-ignore
-        this.titleElement = document.getElementById('name-creat');
+        this.titleElement = document.getElementById('name-creat') as HTMLInputElement;
         this.accButton = document.getElementById('acc');
         this.rejButton = document.getElementById('rej');
 

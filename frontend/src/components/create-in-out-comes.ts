@@ -1,7 +1,7 @@
 import {Sidebar} from "../functional/sidebar";
 import {CustomHttp} from "../services/custom-http";
 import config from "../config/config";
-import {CreatOperationType} from "../types/creat-operation.type";
+import {OperationType} from "../types/operation.type";
 import {ComeResultType} from "../types/come-result.type";
 
 export class CreatInOutComes {
@@ -19,8 +19,8 @@ export class CreatInOutComes {
     private optionElement: HTMLElement | null;
     readonly inputsElement: HTMLCollectionOf<Element>;
     readonly operId: string;
-    private operInfo: CreatOperationType | null;
-    id: string | null;
+    private operInfo: OperationType | null;
+    private id: string | null;
     readonly valid: boolean;
 
     constructor(param: string | null) {
@@ -29,17 +29,11 @@ export class CreatInOutComes {
         this.saveButton = document.getElementById('acc');
         this.rejButton = document.getElementById('rej');
         this.responseCat = null;
-        // @ts-ignore
-        this.selectTypeElement = document.getElementById('type');
-        // @ts-ignore
-        this.selectCategoryElement = document.getElementById('category');
-        // @ts-ignore
-        this.selectAmountElement = document.getElementById('amount');
-        // @ts-ignore
-        this.selectDateElement = document.getElementById('data');
-        // @ts-ignore
-        this.selectCommentElement = document.getElementById('comment');
-        // @ts-ignore
+        this.selectTypeElement = document.getElementById('type') as HTMLInputElement;
+        this.selectCategoryElement = document.getElementById('category') as HTMLInputElement;
+        this.selectAmountElement = document.getElementById('amount') as HTMLInputElement;
+        this.selectDateElement = document.getElementById('data') as HTMLInputElement;
+        this.selectCommentElement = document.getElementById('comment') as HTMLInputElement;
         this.optionElement = document.getElementById('category');
         this.inputsElement = document.getElementsByClassName('input-create');
         this.operId = location.href.split('id=')[1];
@@ -80,19 +74,19 @@ export class CreatInOutComes {
         }
         this.type = this.operInfo.type;
         await this.takeCategory();
-        this.selectTypeElement.value = this.type
-        this.selectCategoryElement.value = this.operInfo.category
-        this.selectAmountElement.value = this.operInfo.amount.toString()
-        let date = this.operInfo.date.split('-')
-        this.selectDateElement.value = date[0] + '-' + date[1] + '-' + date[2]
-        this.selectCommentElement.value = this.operInfo.comment
+        this.selectTypeElement.value = this.type;
+        this.selectCategoryElement.value = this.operInfo.category;
+        this.selectAmountElement.value = this.operInfo.amount.toString();
+        let date: string[] = this.operInfo.date.split('-');
+        this.selectDateElement.value = date[0] + '-' + date[1] + '-' + date[2];
+        this.selectCommentElement.value = this.operInfo.comment;
     }
 
     private async takeCategoryOnchange(): Promise<void> {
         if (!this.selectTypeElement) {
             return;
         }
-        this.selectTypeElement.onchange = async () => {
+        this.selectTypeElement.onchange = async(): Promise<void> => {
             this.type = this.selectTypeElement!.value;
             if (this.type) {
                 this.responseCat = await CustomHttp.request(config.host + '/categories/' + this.type);

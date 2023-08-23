@@ -2,7 +2,7 @@ import {Sidebar} from "../functional/sidebar";
 import {Period} from "../functional/period";
 import {CustomHttp} from "../services/custom-http";
 import config from "../config/config";
-import {CreatOperationType} from "../types/creat-operation.type";
+import {OperationType} from "../types/operation.type";
 
 export class InOutComes {
 
@@ -69,10 +69,10 @@ export class InOutComes {
     }
 
     private async processOperations(): Promise<void> {
-        const result: CreatOperationType[] = await CustomHttp.request(config.host + '/operations?period=' + this.period);
+        const result: OperationType[] = await CustomHttp.request(config.host + '/operations?period=' + this.period);
 
         if (result.length > 0) {
-            result.forEach((item: CreatOperationType, index: number): void => {
+            result.forEach((item: OperationType, index: number): void => {
                 //Строка таблицы---------
                 this.tabletItemElement = document.createElement('tr');
                 this.tabletItemElement.classList.add('tablet__item');

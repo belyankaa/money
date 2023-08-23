@@ -12,13 +12,11 @@ export class ChangeComes {
 
     constructor(page: string | null) {
         this.page = page;
-        // @ts-ignore
-        this.titleElement = document.getElementById('name-creat');
+        this.titleElement = document.getElementById('name-creat') as HTMLInputElement;
         this.saveButton = document.getElementById('save');
         this.rejButton = document.getElementById('rej');
         this.cardId = location.href.split('id=')[1];
-        // @ts-ignore
-        this.inputElement = document.getElementById('name-creat');
+        this.inputElement = document.getElementById('name-creat') as HTMLInputElement;
 
 
         this.buttons();

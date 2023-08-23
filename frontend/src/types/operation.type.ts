@@ -1,4 +1,4 @@
-export type CreatOperationType = {
+export type OperationType = {
     id: number,
     type: string,
     amount: number,

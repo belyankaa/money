@@ -1,5 +1,6 @@
 import {CustomHttp} from "../services/custom-http";
 import config from "../config/config";
+import {OperationType} from "../types/operation.type";
 
 export class ActionButtons {
     readonly page: string | null;
@@ -26,14 +27,14 @@ export class ActionButtons {
         let cardId: string | null | undefined = null;
         let categoryName: string | null = null
 
-        const result = await CustomHttp.request(config.host + '/operations?period=all', 'GET');
+        const result: OperationType[] = await CustomHttp.request(config.host + '/operations?period=all', 'GET');
 
         if (!btn || !this.sureNo || !this.sureYes) {
             return;
         }
 
-        for (let i = 0; i < btn.length; i++) {
-            btn[i].onclick = () => {
+        for (let i: number = 0; i < btn.length; i++) {
+            (btn[i] as HTMLElement).onclick = () => {
                 if (btn[i].classList.contains('btn-red')) {
                     cardId = btn[i].parentElement!.parentElement!.getAttribute('data-id');
                     location.href = '/#/red-' + this.page + "?id=" + cardId;
@@ -44,7 +45,7 @@ export class ActionButtons {
                     this.sureElement.classList.add('are__you__in');
                     this.sureBgElement.classList.add('are__you__in');
                     cardId = btn[i].parentElement!.parentElement!.getAttribute('data-id');
-                    categoryName = btn[i].previousElementSibling!.previousElementSibling!.innerText;
+                    categoryName = (btn[i].previousElementSibling!.previousElementSibling! as HTMLInputElement).innerText;
                 }
             }
         }
@@ -59,7 +60,7 @@ export class ActionButtons {
         }
 
 
-        this.sureYes.onclick = () => {
+        this.sureYes.onclick = (): void => {
             CustomHttp.request(config.host + '/categories/' + this.page + '/' + cardId, 'DELETE');
             result.forEach((item) => {
                 if (item.category === categoryName) {
@@ -78,7 +79,7 @@ export class ActionButtons {
         }
     }
 
-    private creatCard() {
+    private creatCard(): void {
         if (!this.cardAddElement) {
             return;
         }

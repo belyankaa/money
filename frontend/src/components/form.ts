@@ -6,8 +6,8 @@ import {FormFieldsType} from "../types/form-fields.type";
 export class Form {
 
     readonly page: string | null;
-    readonly rememberElement: HTMLElement | null;
-    private processElement: HTMLElement | null;
+    readonly rememberElement: HTMLInputElement | null;
+    readonly processElement: HTMLElement | null;
     private fields: FormFieldsType[];
 
 
@@ -57,16 +57,16 @@ export class Form {
                     textReg: 'Пароли не совпадают'
                 })
         } else {
-            this.rememberElement = document.getElementById('gridCheck');
+            this.rememberElement = document.getElementById('gridCheck') as HTMLInputElement;
         }
 
         const that = this;
-        this.fields.forEach((item: FormFieldsType) => {
+        this.fields.forEach((item: FormFieldsType): void => {
             item.element = document.getElementById(item.id);
             if (!item.element) {
                 return;
             }
-            item.element.onchange = function () {
+            item.element.onchange = function (): void {
                 that.validateField.call(that, item, this);
                 if (that.page === 'signup') {
                     that.checkPasswords();
@@ -82,7 +82,7 @@ export class Form {
         }
     }
 
-    private validateField(field, element): void {
+    private validateField(field: FormFieldsType, element: any): void {
         if (this.page === 'signup') {
             if (!element.value || !element.value.match(field.regex)) {
                 element.classList.add('error-input');
@@ -114,20 +114,20 @@ export class Form {
         }
         if ((field2 as HTMLInputElement).value && passwordField) {
             if ((field1 as HTMLInputElement).value !== (field2 as HTMLInputElement).value) {
-                field2.parentElement!.nextElementSibling!.innerText = repeatPasswordField.textReg
-                field2.parentElement!.nextElementSibling!.style.display = 'block'
+                (field2.parentElement!.nextElementSibling! as HTMLElement).innerText = repeatPasswordField.textReg;
+                (field2.parentElement!.nextElementSibling! as HTMLElement).style.display = 'block';
                 field1.classList.add('error-input');
                 field2.classList.add('error-input');
                 repeatPasswordField.valid = false;
             } else {
-                field2.parentElement!.nextElementSibling!.style.display = 'none'
+                (field2.parentElement!.nextElementSibling! as HTMLElement).style.display = 'none';
                 field1.classList.remove('error-input');
                 field2.classList.remove('error-input');
                 repeatPasswordField.valid = true;
             }
         } else {
-            field2.classList.remove('error-input')
-            field2.parentElement!.nextElementSibling!.style.display = 'none'
+            field2.classList.remove('error-input');
+            (field2.parentElement!.nextElementSibling! as HTMLElement).style.display = 'none';
         }
         this.validateForm();
     }
@@ -147,21 +147,22 @@ export class Form {
 
     private async processForm(): Promise<void> {
         if (this.validateForm()) {
-            const email = this.fields.find((item: FormFieldsType): boolean => item.name === 'email').element.value;
-            const password = this.fields.find((item: FormFieldsType): boolean => item.name === 'password').element.value;
+            const email: string | undefined = (this.fields.find((item: FormFieldsType) => item.name === 'email')?.element as HTMLInputElement).value;
+            const password: string | undefined = (this.fields.find((item: FormFieldsType) => item.name === 'password')?.element as HTMLInputElement).value;
+
 
 
             if (this.page === 'signup') {
                 try {
-                    const name = this.fields.find((item: FormFieldsType): boolean => item.name === 'name').element.value.split(' ')
-                    const repeatPassword = this.fields.find((item: FormFieldsType): boolean => item.name === 'repeatPassword').element.value;
-                    // const result = await CustomHttp.request(config.host + '/signup', 'POST', {
-                    //     name: name[0],
-                    //     lastName: name[1],
-                    //     email: email,
-                    //     password: password,
-                    //     passwordRepeat: repeatPassword
-                    // });
+                    const name: string[] | undefined = (this.fields.find((item: FormFieldsType) => item.name === 'name')?.element as HTMLInputElement)?.value.split(' ');
+                    const repeatPassword: string | undefined = (this.fields.find((item: FormFieldsType) => item.name === 'repeatPassword')?.element as HTMLInputElement).value;
+                    const result = await CustomHttp.request(config.host + '/signup', 'POST', {
+                        name: name[0],
+                        lastName: name[1],
+                        email: email,
+                        password: password,
+                        passwordRepeat: repeatPassword
+                    });
 
                     try {
                         const param = {
@@ -169,7 +170,7 @@ export class Form {
                             password: password,
                         }
 
-                        const result = await CustomHttp.request(config.host + '/login', 'POST', param);
+                        const result: any = await CustomHttp.request(config.host + '/login', 'POST', param);
 
                         if (result) {
                             if (result.error || !result.tokens.accessToken || !result.tokens.refreshToken || !result.user.name || !result.user.lastName || !result.user.id) {
@@ -196,7 +197,7 @@ export class Form {
                     const param = {
                         email: email,
                         password: password,
-                        rememberMe: this.rememberElement.checked
+                        rememberMe: this.rememberElement?.checked
                     }
 
                     const result = await CustomHttp.request(config.host + '/login', 'POST', param);
