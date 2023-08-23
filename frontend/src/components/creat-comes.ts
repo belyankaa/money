@@ -4,12 +4,13 @@ import config from "../config/config";
 export class CreatComes {
 
     readonly page: string | null;
-    readonly titleElement: HTMLElement | null;
+    readonly titleElement: HTMLInputElement | null;
     readonly accButton: HTMLElement | null;
     readonly rejButton: HTMLElement | null;
 
     constructor(page: string | null) {
         this.page = page;
+        // @ts-ignore
         this.titleElement = document.getElementById('name-creat');
         this.accButton = document.getElementById('acc');
         this.rejButton = document.getElementById('rej');

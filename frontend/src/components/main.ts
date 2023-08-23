@@ -4,10 +4,11 @@ import {Period} from "../functional/period";
 import {CustomHttp} from "../services/custom-http";
 import config from "../config/config";
 import {MainDataOper, MainDataType} from "../types/main-data.type";
+import {CreatOperationType} from "../types/creat-operation.type";
 
 export class Main {
 
-    private buttonsPeriod: HTMLCollection | null;
+    private readonly buttonsPeriod: HTMLCollection | null;
     private period: string | null;
     private data: MainDataType;
 
@@ -22,16 +23,17 @@ export class Main {
 
         this.charts();
         new Sidebar();
-        new Period();
+        new Period(null);
         this.buttons();
     }
 
 
-    async charts() {
-        const result = await CustomHttp.request(config.host + '/operations?period=' + this.period);
+    async charts(): Promise<void> {
+        const result: CreatOperationType[] = await CustomHttp.request(config.host + '/operations?period=' + this.period);
 
 
-        let ctxP1 = document.getElementById("pieChartIn").getContext('2d');
+        // @ts-ignore
+        let ctxP1 = document.getElementById("pieChartIn")?.getContext('2d')!;
         let myPieChart1 = new Chart(ctxP1, {
             type: 'pie',
             data: {
@@ -47,7 +49,8 @@ export class Main {
             }
         });
 
-        let ctxP2 = document.getElementById("pieChartOut").getContext('2d');
+        // @ts-ignore
+        let ctxP2 = document.getElementById("pieChartOut")?.getContext('2d');
         let myPieChart2 = new Chart(ctxP2, {
             type: 'pie',
             data: {
@@ -63,9 +66,9 @@ export class Main {
             },
         });
 
-        result.forEach(item => {
+        result.forEach((item: CreatOperationType): void => {
             if (item.type === 'income') {
-                const index = this.data.income.findIndex(incomeItem => incomeItem.category === item.category)
+                const index: number = this.data.income.findIndex((incomeItem: MainDataOper): boolean => incomeItem.category === item.category)
 
                 if (index !== -1) {
                     this.data.income[index].amount += item.amount
@@ -103,9 +106,9 @@ export class Main {
 
     }
 
-    private addData(chart, label: string, newData: number): void {
+    private addData(chart: any, label: string, newData: number): void {
         chart.data.labels.push(label);
-        chart.data.datasets.forEach((dataset) => {
+        chart.data.datasets.forEach((dataset: any): void => {
             dataset.data.push(newData);
         });
         chart.update();

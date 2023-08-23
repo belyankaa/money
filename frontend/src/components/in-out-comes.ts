@@ -2,11 +2,12 @@ import {Sidebar} from "../functional/sidebar";
 import {Period} from "../functional/period";
 import {CustomHttp} from "../services/custom-http";
 import config from "../config/config";
+import {CreatOperationType} from "../types/creat-operation.type";
 
 export class InOutComes {
 
     readonly page: string | null;
-    private operId: HTMLElement | null;
+    private operId: string | null;
     readonly sureElement: HTMLElement | null;
     readonly sureBgElement: HTMLElement | null;
     readonly sureYes: HTMLElement | null;
@@ -68,15 +69,14 @@ export class InOutComes {
     }
 
     private async processOperations(): Promise<void> {
-        const result = await CustomHttp.request(config.host + '/operations?period=' + this.period);
+        const result: CreatOperationType[] = await CustomHttp.request(config.host + '/operations?period=' + this.period);
 
         if (result.length > 0) {
-            let type = null;
-            result.forEach((item, index: number): void => {
+            result.forEach((item: CreatOperationType, index: number): void => {
                 //Строка таблицы---------
                 this.tabletItemElement = document.createElement('tr');
                 this.tabletItemElement.classList.add('tablet__item');
-                this.tabletItemElement.setAttribute('data-id', item.id);
+                this.tabletItemElement.setAttribute('data-id', item.id.toString());
 
                 //Порядковый номер---------
                 this.tabletCountElement = document.createElement('th');
@@ -100,7 +100,7 @@ export class InOutComes {
 
                 //Сумма---------
                 this.tableAmountElement = document.createElement('td');
-                this.tableAmountElement.innerText = item.amount;
+                this.tableAmountElement.innerText = item.amount.toString();
 
                 //Дата---------
                 const date = item.date.split('-')[0] + '.' + item.date.split('-')[1] + '.' + item.date.split('-')[2];
@@ -194,7 +194,7 @@ export class InOutComes {
             return;
         }
         for (let i = 0; i < this.delButtons.length; i++) {
-            this.delButtons[i].onclick = (): void => {
+            (this.delButtons[i] as HTMLElement).onclick = (): void => {
                 if (!this.sureElement || !this.sureBgElement) {
                     return;
                 }
@@ -205,7 +205,7 @@ export class InOutComes {
         }
 
         for (let i = 0; i < this.redButtons.length; i++) {
-            this.redButtons[i].onclick = () => {
+            (this.redButtons[i] as HTMLElement).onclick = () => {
                 this.operId = this.redButtons![i].parentElement!.parentElement!.getAttribute('data-id');
                 location.href = '/#/redact-in-out-comes?id=' + this.operId;
             }

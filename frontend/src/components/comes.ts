@@ -2,11 +2,12 @@ import {Sidebar} from "../functional/sidebar";
 import {CustomHttp} from "../services/custom-http";
 import config from "../config/config";
 import {ActionButtons} from "../functional/action-buttons";
+import {ComeResultType} from "../types/come-result.type";
 
 export class Comes {
 
-    readonly page: string | null;
-    private response;
+    readonly page: string;
+    private response: ComeResultType[];
     readonly cardsBlockElement: HTMLElement | null;
     private cardElement: HTMLElement | null;
     private cardBodyElement: HTMLElement | null;
@@ -16,7 +17,7 @@ export class Comes {
     private cardsAddElement: HTMLElement | null;
     private svgAddElement: HTMLElement | null;
 
-    constructor(page: string | null) {
+    constructor(page: string) {
         this.page = page;
         this.response = [];
 
@@ -49,7 +50,7 @@ export class Comes {
         try {
             this.response = await CustomHttp.request(config.host + '/categories/' + this.page);
         } catch (e) {
-            console.log(e.message)
+
         }
 
     }
@@ -58,14 +59,14 @@ export class Comes {
         try {
             this.response = await CustomHttp.request(config.host + '/categories/' + this.page);
         } catch (e) {
-            console.log(e.message)
+
         }
     }
 
     private processComes(): void {
         this.response.forEach(item => {
             this.cardElement = document.createElement('div');
-            this.cardElement.setAttribute('data-id', item.id);
+            this.cardElement.setAttribute('data-id', item.id.toString());
             this.cardBodyElement = document.createElement('div');
             this.cardTitleElement = document.createElement('h5');
             this.buttonCrElement = document.createElement('div');
@@ -105,7 +106,7 @@ export class Comes {
     }
 
     private processButtons(): void {
-        if (!this.buttonCrElement || !this.cardBodyElement) {
+        if (!this.buttonCrElement || !this.cardBodyElement || !this.buttonDelElement) {
             return;
         }
         this.buttonCrElement.innerText = 'Редактировать';

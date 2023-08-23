@@ -63,6 +63,9 @@ export class Form {
         const that = this;
         this.fields.forEach((item: FormFieldsType) => {
             item.element = document.getElementById(item.id);
+            if (!item.element) {
+                return;
+            }
             item.element.onchange = function () {
                 that.validateField.call(that, item, this);
                 if (that.page === 'signup') {
@@ -102,15 +105,15 @@ export class Form {
     }
 
     private checkPasswords(): void {
-        const field1: HTMLElement | null = document.getElementById('password');
-        const field2: HTMLElement | null = document.getElementById('repeatPassword');
+        const field1: HTMLInputElement | HTMLElement | null = document.getElementById('password');
+        const field2: HTMLInputElement | HTMLElement | null = document.getElementById('repeatPassword');
         const repeatPasswordField: FormFieldsType | undefined = this.fields.find(item => item.name === 'repeatPassword');
-        const passwordField: FormFieldsType | undefined = this.fields.find(item => item.name === 'password');
+        const passwordField: FormFieldsType | undefined = this.fields.find((item: FormFieldsType): boolean => item.name === 'password');
         if (!field1 || !field2 || !repeatPasswordField) {
             return;
         }
-        if (field2.value && passwordField.valid) {
-            if (field1.value !== field2.value) {
+        if ((field2 as HTMLInputElement).value && passwordField) {
+            if ((field1 as HTMLInputElement).value !== (field2 as HTMLInputElement).value) {
                 field2.parentElement!.nextElementSibling!.innerText = repeatPasswordField.textReg
                 field2.parentElement!.nextElementSibling!.style.display = 'block'
                 field1.classList.add('error-input');
@@ -144,21 +147,21 @@ export class Form {
 
     private async processForm(): Promise<void> {
         if (this.validateForm()) {
-            const email = this.fields.find(item=> item.name === 'email').element.value;
-            const password = this.fields.find(item=> item.name === 'password').element.value;
+            const email = this.fields.find((item: FormFieldsType): boolean => item.name === 'email').element.value;
+            const password = this.fields.find((item: FormFieldsType): boolean => item.name === 'password').element.value;
 
 
             if (this.page === 'signup') {
                 try {
-                    const name = this.fields.find(item=> item.name === 'name').element.value.split(' ')
-                    const repeatPassword = this.fields.find(item=> item.name === 'repeatPassword').element.value;
-                    const result = await CustomHttp.request(config.host + '/signup', 'POST', {
-                        name: name[0],
-                        lastName: name[1],
-                        email: email,
-                        password: password,
-                        passwordRepeat: repeatPassword
-                    });
+                    const name = this.fields.find((item: FormFieldsType): boolean => item.name === 'name').element.value.split(' ')
+                    const repeatPassword = this.fields.find((item: FormFieldsType): boolean => item.name === 'repeatPassword').element.value;
+                    // const result = await CustomHttp.request(config.host + '/signup', 'POST', {
+                    //     name: name[0],
+                    //     lastName: name[1],
+                    //     email: email,
+                    //     password: password,
+                    //     passwordRepeat: repeatPassword
+                    // });
 
                     try {
                         const param = {

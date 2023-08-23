@@ -67,7 +67,7 @@ export class Router {
                 template: 'templates/create-in-out-come.html',
                 styles: 'styles/in-out-comes.css',
                 load: () => {
-                    new CreatInOutComes();
+                    new CreatInOutComes(null);
                 }
             },
             {

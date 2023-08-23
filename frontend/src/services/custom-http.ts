@@ -1,9 +1,9 @@
 import {Auth} from "./auth";
 
 export class CustomHttp {
-    public static async request(url: string, method: string = 'GET', body: object | null = null) {
+    public static async request(url: string, method: string = 'GET', body: any = null): Promise<any> {
 
-        const params = {
+        const params: any = {
             method: method,
             headers: {
                 'Content-type': 'application/json',
@@ -23,7 +23,7 @@ export class CustomHttp {
 
         if (response.status < 200 || response.status >= 300) {
             if (response.status === 401) {
-                const result = await Auth.processUnauthorizedResponse();
+                const result: boolean = await Auth.processUnauthorizedResponse();
                 if (result) {
                     return await this.request(url, method, body);
                 } else {
@@ -31,7 +31,7 @@ export class CustomHttp {
                 }
             }
 
-            throw new Error(response.message);
+            throw new Error(response.statusText);
         }
 
         return await response.json();

@@ -2,14 +2,14 @@ import config from "../config/config";
 import {UserInfoType} from "../types/user-info.type";
 
 export class Auth {
-    public static accessTokenKey = 'accessToken';
-    public static refreshTokenKey = 'refreshToken';
-    public static userInfoKey = 'userInfo';
+    public static accessTokenKey: string = 'accessToken';
+    public static refreshTokenKey: string = 'refreshToken';
+    public static userInfoKey: string = 'userInfo';
 
     public static async processUnauthorizedResponse(): Promise<boolean> {
         const refreshToken: string | null = localStorage.getItem(this.refreshTokenKey);
         if (refreshToken) {
-            const response = await fetch(config.host + '/refresh', {
+            const response: Response = await fetch(config.host + '/refresh', {
                 method: 'POST',
                 headers: {
                     'Content-type': 'application/json',
